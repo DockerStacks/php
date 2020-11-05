@@ -69,9 +69,7 @@ RUN set -x \
     && ln -sf /dev/stderr /var/log/apache2/error.log
 
 COPY apache /
-RUN chmod +x /sbin/runit-wrapper
-RUN chmod +x /sbin/runsvdir-start
-RUN chmod +x /etc/service/apapche/run
+
 
 EXPOSE 80
 
