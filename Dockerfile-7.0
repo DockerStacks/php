@@ -71,6 +71,7 @@ RUN set -x \
 COPY apache /
 RUN chmod +x /sbin/runit-wrapper
 RUN chmod +x /sbin/runsvdir-start
+RUN chmod +x /etc/service/apache/run
 
 EXPOSE 80
 
