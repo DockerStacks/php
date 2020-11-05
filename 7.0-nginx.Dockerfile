@@ -1,5 +1,7 @@
 FROM alpine:3.7
 
+LABEL MANTAINTS Naba Das <nabad600@gmail.com> 
+
 ARG BUILD_DATE
 ARG VCS_REF
 

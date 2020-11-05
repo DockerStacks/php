@@ -1,4 +1,5 @@
 FROM alpine:3.9
+LABEL MANTAINTS Naba Das <nabad600@gmail.com>
 
 ARG BUILD_DATE
 ARG VCS_REF
@@ -68,6 +69,10 @@ RUN set -x \
     && ln -sf /dev/stderr /var/log/nginx/error.log
 
 COPY tags/nginx /
+RUN chmod +x /sbin/runit-wrapper
+RUN chmod +x /sbin/runsvdir-start
+RUN chmod +x /etc/service/nginx/run
+RUN chmod +x /etc/service/php-fpm/run
 
 EXPOSE 80
 

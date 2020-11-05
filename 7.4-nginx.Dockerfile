@@ -68,6 +68,10 @@ RUN set -x \
     && ln -sf /dev/stderr /var/log/nginx/error.log
 
 COPY tags/nginx /
+RUN chmod +x /sbin/runit-wrapper
+RUN chmod +x /sbin/runsvdir-start
+RUN chmod +x /etc/service/nginx/run
+RUN chmod +x /etc/service/php-fpm/run
 
 EXPOSE 80
 
