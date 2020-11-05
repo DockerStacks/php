@@ -1,0 +1,113 @@
+FROM alpine:3.9
+LABEL MAINTAINE Naba Das <nabad600@gmail.com>
+
+ARG BUILD_DATE
+ARG VCS_REF
+
+LABEL org.label-schema.build-date=$BUILD_DATE \
+      org.label-schema.vcs-url="https://github.com/phpearth/docker-php.git" \
+      org.label-schema.vcs-ref=$VCS_REF \
+      org.label-schema.schema-version="1.0" \
+      org.label-schema.vendor="PHP.earth" \
+      org.label-schema.name="docker-php" \
+      org.label-schema.description="Docker For PHP Developers - Docker image with PHP 7.1, Apache, and Alpine" \
+      org.label-schema.url="https://github.com/phpearth/docker-php"
+
+# PHP_INI_DIR to be symmetrical with official php docker image
+ENV PHP_INI_DIR /etc/php/7.1
+
+# When using Composer, disable the warning about running commands as root/super user
+ENV COMPOSER_ALLOW_SUPERUSER=1
+
+# Persistent runtime dependencies
+ARG DEPS="\
+        bash \
+		curl \
+		curl-dev \
+		php5-intl \
+		php5-openssl \
+		php5-dba \
+		php5-sqlite3 \
+		php5-pear \
+		php5-phpdbg \
+		php5-gmp \
+		php5-pdo_mysql \
+		php5-pcntl \
+		php5-common \
+		php5-xsl \
+		php5-fpm \	
+		php5-mysql \
+		php5-mysqli \
+		php5-enchant \
+		php5-pspell \
+		php5-snmp \
+		php5-doc \
+		php5-dev \
+		php5-xmlrpc \
+		php5-embed \
+		php5-xmlreader \
+		php5-pdo_sqlite \
+		php5-exif \
+		php5-opcache \
+		php5-ldap \
+		php5-posix \	
+		php5-gd  \
+		php5-gettext \
+		php5-json \
+		php5-xml \
+		php5 \
+		php5-iconv \
+		php5-sysvshm \
+		php5-curl \
+		php5-shmop \
+		php5-odbc \
+		php5-phar \
+		php5-pdo_pgsql \
+		php5-imap \
+		php5-pdo_dblib \
+		php5-pgsql \
+		php5-pdo_odbc \
+		php5-xdebug \
+		php5-zip \
+		php5-apache2 \
+		php5-cgi \
+		php5-ctype \
+		php5-mcrypt \
+		php5-wddx \
+		php5-bcmath \
+		php5-calendar \
+		php5-dom \
+		php5-sockets \
+		php5-soap \
+		php5-apcu \
+		php5-sysvmsg \
+		php5-zlib \
+		php5-ftp \
+		php5-sysvsem \ 
+		php5-pdo \
+		php5-bz2 \
+		php5-mysqli \
+  		apache2 \
+		libxml2-dev \
+		apache2-utils \
+        runit \
+"
+
+# PHP.earth Alpine repository for better developer experience
+ADD https://repos.php.earth/alpine/phpearth.rsa.pub /etc/apk/keys/phpearth.rsa.pub
+
+RUN set -x \
+    && echo "https://repos.php.earth/alpine/v3.9" >> /etc/apk/repositories \
+    && apk add --no-cache $DEPS \
+    && mkdir -p /run/apache2 \
+    && ln -sf /dev/stdout /var/log/apache2/access.log \
+    && ln -sf /dev/stderr /var/log/apache2/error.log
+
+COPY apache /
+RUN chmod +x /sbin/runit-wrapper
+RUN chmod +x /sbin/runsvdir-start
+RUN chmod +x /etc/service/apapche/run
+
+EXPOSE 80
+
+CMD ["/sbin/runit-wrapper"]
